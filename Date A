@@ -1,0 +1,119 @@
+#include <stdio.h>
+
+/*int midterm_quiz_q1(int num);
+
+int main() {
+    
+    int num;
+    scanf(" %d", &num);
+    
+    printf("%d", midterm_quiz_q1((int)num));
+
+    return 0;
+}
+
+int midterm_quiz_q1(int num) {
+    
+    int sum = 0;
+    
+    for (int i = 1; i*i <= num; i++) {
+        if (num % i == 0)
+            if (i*i != num)
+                sum += (i + num/i);
+            else
+                sum += i;
+    }
+    
+    return (sum > 2*num);
+    
+}*/
+
+
+/*int midterm_quiz_q2(int arr[], int n);
+
+int main() {
+    
+    int n;
+    
+    scanf(" %d", &n);
+    
+    int arr[n];
+    
+    for (int i = 0; i < n; i++)
+        scanf(" %d", &arr[i]);
+        
+    printf("%d", midterm_quiz_q2(arr, n));
+
+    return 0;
+}
+
+int midterm_quiz_q2(int arr[], int n) {
+    
+    int counter = 0, avg = 0;
+    
+    for (int i = 0; i < n; i++)
+        avg += arr[i]/n;
+    
+    for (int i = 0; i < n; i++)
+        if (arr[i] > avg)
+            counter++;
+            
+    return counter;
+}*/
+
+#include <stdbool.h>
+
+#define M 3
+#define N 4
+
+void midterm_quiz_q3(int pic[M][N]);
+
+int main() {
+    
+    int pic[M][N];
+    
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++)
+            scanf(" %d", &pic[j][i]);
+            
+    midterm_quiz_q3(pic);
+    
+    printf("\n\n");
+            
+    for (int i = 0; i < N; i++) {
+        printf("\n");
+        for (int j = 0; j < M; j++)
+                printf("%d ", pic[j][i]);
+    }
+
+    return 0;
+}
+
+void midterm_quiz_q3(int pic[M][N]) {
+    
+    int temp[M][N];
+    
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++)
+        temp[j][i] = pic[j][i];
+    
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < M; j++) {
+            bool ascend = true, descend = true;
+            for (int h = -1; h <= 1; h++)
+                for (int v = -1; v <= 1; v++)
+                    if (!(v == 0 && h == 0))
+                        if (i+v < N && i+v >= 0 && j+h < M && j+h >= 0) {
+                            ascend *= (pic[j][i] > temp[j+h][i+v]);
+                            descend *= (pic[j][i] < temp[j+h][i+v]);
+                        }
+            if ( (ascend && !descend) || (!ascend && descend) )
+                pic[j][i] = -1;
+        }
+    
+}
+
+
+
+
+
