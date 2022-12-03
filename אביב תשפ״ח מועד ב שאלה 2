@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_LEN 100
+
+int FindDuplicate(int arr[], int n);
+
+bool ReadArray(int arr[], int n)
+{
+	
+	for (int i = 0; i < n; ++i)
+		if (scanf("%d", &arr[i]) != 1)
+		{
+			return false;
+		}
+	
+	return true;
+}
+
+
+int main()
+{
+	int n, k;
+	int arr[MAX_LEN];
+	if (scanf("%d", &n) != 1 || n > MAX_LEN)
+		return 1;
+
+	if (!ReadArray(arr, n))
+	    return 1;
+
+	printf("%d", FindDuplicate(arr, n));
+	
+	return 0;
+}
+
+/************************************
+/ Write here your answer:
+/***********************************/
+
+int FindDuplicate(int arr[], int n)
+{
+    int h[n];
+    for (int i = 0; i < n; i++) {
+        h[i] = 0;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        h[arr[i]-1]++;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (h[i] >=2)
+            return i+1;
+    }
+    
+    return 0;
+}
