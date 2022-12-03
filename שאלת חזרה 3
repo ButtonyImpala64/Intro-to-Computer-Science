@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_LEN 100
+
+int max_profit(int arr[], int n);
+
+bool ReadArray(int arr[], int n)
+{
+	
+	for (int i = 0; i < n; ++i)
+		if (scanf("%d", &arr[i]) != 1)
+		{
+			return false;
+		}
+	
+	return true;
+}
+
+int main()
+{
+	int n;
+	int arr[MAX_LEN];
+	if (scanf("%d", &n) != 1 || n > MAX_LEN)
+		return 1;
+
+	if (!ReadArray(arr, n))
+	    return 1;
+
+	printf("%d", max_profit(arr, n));
+	
+	return 0;
+}
+
+/************************************
+/ Write here your answer:
+/***********************************/
+
+int max_profit(int arr[], int n)
+{
+    int max_profit = 0;
+    for (int i = 0; i < n; i++){
+        for (int j = i + 1, profit = 0; j < n; j++) {
+            if (arr[j] - arr[i] > profit)
+                profit = arr[j] - arr[i];
+            if (profit > max_profit)
+                max_profit = profit;
+        }
+    }
+    
+    return max_profit;
+}
