@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_LEN 100
+
+int harshad_seq(int arr[], int n, int k);
+int check_rashad(int x);
+
+bool ReadArray(int arr[], int n)
+{
+	
+	for (int i = 0; i < n; ++i)
+		if (scanf("%d", &arr[i]) != 1)
+		{
+			return false;
+		}
+	
+	return true;
+}
+
+int main()
+{
+	int n, k;
+	int arr[MAX_LEN];
+	if (scanf("%d", &n) != 1 || n > MAX_LEN)
+		return 1;
+
+	if (!ReadArray(arr, n))
+	    return 1;
+	    
+	if (scanf("%d", &k) != 1 || k <= 0)
+	    return 1;
+
+	printf("%d", harshad_seq(arr, n, k));
+	
+	return 0;
+}
+
+/************************************
+/ Write here your answer:
+/***********************************/
+
+int harshad_seq(int arr[], int n, int k)
+{
+    int index, max_seq = 0;
+    for (int i = 0, cur_seq = 0; i < n; i++) {
+        
+        if (check_rashad(arr[i])) {
+            cur_seq++;
+            if (cur_seq == 1)
+                index = i;
+            if (i == n-1)
+                if (cur_seq >= k)
+                return index;
+        } else {
+            if (cur_seq >= k)
+                return index;
+            cur_seq = 0;
+        }
+        
+    }
+    
+
+    return -1;
+}
+
+int check_rashad(int x) {
+    
+    int temp = x;
+    int sum = 0;
+    
+    for (; temp/10 > 0; temp /= 10)
+        sum += temp % 10;
+    sum += temp;
+    
+    return (x % sum == 0);
+    
+}
