@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_LEN 100
+
+int LongestSequence (int a[], int n, int k);
+
+bool ReadArray(int arr[], int n)
+{
+	for (int i = 0; i < n; ++i)
+		if (scanf("%d", &arr[i]) != 1)
+			return false;
+
+	return true;
+}
+
+
+int main()
+{
+	int n, k;
+	int arr[MAX_LEN];  
+	if (scanf("%d", &n) != 1 || n > MAX_LEN)
+		return 1;
+
+	if (!ReadArray(arr, n))
+	    return 1;
+	
+	if (scanf("%d", &k) != 1)
+	    return 1;
+
+	printf("%d\n", LongestSequence(arr, n, k));
+
+	return 0;
+}
+
+/************************************
+/ Write here your answer:
+/***********************************/
+
+int LongestSequence (int a[], int n, int k)
+{
+    
+    int longest = 0;
+    
+    for (int i = 0; i < n; i++)
+        for (int j = i, counter1 = 0, counter2 = 0; j < n; j++) {
+            
+            if (a[j] == 0)
+                counter1++;
+            if (counter1 > k)
+                break;
+                
+            counter2++;
+            if (counter2 > longest)
+                longest = counter2;
+            
+        }
+    
+    return longest;
+}
