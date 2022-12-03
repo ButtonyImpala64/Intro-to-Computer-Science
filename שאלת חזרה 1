@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int is_harshad_num(int x);
+
+int main()
+{
+    int x;
+	if (scanf("%d", &x) != 1 || x <= 0)
+		return 1;
+
+	printf("%d", is_harshad_num(x));
+	
+	return 0;
+}
+
+/************************************
+/ Write here your answer:
+/***********************************/
+
+int is_harshad_num(int x)
+{
+    int sum = 0;
+    int temp = x;
+    
+    for (; temp/10 > 0; temp /= 10) {
+        sum += temp%10;
+    }
+    sum += temp;
+    
+    return (x % sum == 0);
+    
+    return 0;
+}
