@@ -1,0 +1,490 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_LOT_LENGTH 9 
+#define MAX_CAR_AMOUNT 10
+
+#define EMPTY_SLOT ' '
+#define EMPTY_SLOT_INPUT 'x'
+#define RED_CAR_CHAR '*'
+
+#define MAX_TURN_COUNT 10
+
+// gets as input from the user the entire parking lot configuration and retuns it's length
+// an empty slot in the parking lot will be represented as 'x', but when the lot s printed it should be as ' ' (space)
+// @param lot - the 2D array to fill as the parking lot.
+// returns int that is the lenght of the lot
+int inputAndParseParkingLot(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH]){
+    printf("Are you ready for rush hour?\n");
+    int length = -1;
+    printf("Please enter the parking lot length: ");
+    scanf("%d", &length); // assume this is always correct
+    printf("Please enter the parking lot:\n");
+    for(int i =0; i < length; ++i){
+        for(int j = 0; j < length; ++j){
+            scanf(" %c", &(lot[i][j]));
+            if(lot[i][j] == EMPTY_SLOT_INPUT){
+                lot[i][j] = EMPTY_SLOT;
+            }
+        }
+    }
+    return length;
+}
+
+// prints the parking lot
+// empty slot will be printed as ' ' (define EMPTY_SLOT)
+void printParkingLot(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length){
+    for(int k = 0; k < length; ++k){
+            printf("~~~");
+        }
+    printf("\n");
+    for(int i = 0; i < length; ++i){
+        for(int j = 0; j < length; ++j){
+            printf("|%c|", lot[i][j]);
+        }
+        printf("\n");
+        for(int k = 0; k < length; ++k){
+            printf("~~~");
+        }
+        printf("\n");
+    }
+}
+
+void printEnterCar(){
+    printf("Enter the car you want to move:\n");
+}
+
+void printInvalidCar(){
+    printf("Invalid car id! enter again:\n");
+}
+
+void printEnterDirection(){
+    printf("Please enter the direction to move the car:\n");
+}
+
+void printInvalidDirection(){
+    printf("Invalid direction!\n");
+}
+
+void printInvalidMove(){
+    printf("Invalid move!\n");
+}
+
+void printGameWon(){
+    printf("GAME OVER! YOU WIN :D\n");
+}
+
+void printGameLost(){
+    printf("GAME OVER! YOU LOST :(\n");
+}
+
+
+char countCars(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+
+int stageThree(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+
+char stageFour(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length, char max);
+bool checkCarValidity(char car, char max);
+
+char stageFiveAndSix(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+char readMove(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+int find_loc_i(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+int find_loc_j(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+char getType(int i, int j, char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+bool checkMoveValidity(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+bool check_neighbors_for_quad(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+bool check_neighbor_for_v(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+bool check_neighbor_for_h(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+int find_end(int i, int j, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+bool moveCar(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+void move_quad(int i, int j, char dir, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH]);
+void move_h(int i, int j, char dir, int end, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH]);
+void move_v(int i, int j, char dir, int end, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH]);
+
+void printResult(char won, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+void Loss(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+void Win(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length);
+
+
+
+int main(){
+    // good luck! try and break this into small parts.
+    // maybe start with counting how many cars...?
+    
+    char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH];
+    
+    
+    //reading and printing the lot.
+    int length = inputAndParseParkingLot(lot), s = 3, tries = 0;
+
+    //counting the cars.
+    char max = countCars(lot, length), car, won = 1;
+
+    while (tries < 10 && won != 'w')
+        switch (s)
+        {
+            
+            case (3):
+                s = stageThree(lot, length);
+                break;
+            
+            case (4):
+                car = stageFour(lot, length, max);
+                s = 5;
+                break;
+            
+            case (5):
+                if (won = stageFiveAndSix(car, lot, length)) {
+                    tries++;
+                }
+                s = 3;
+                break;
+            
+            
+        }
+        
+    printResult(won, lot, length);
+    return 0;
+    
+}
+
+
+int stageThree(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    printParkingLot(lot, length);
+    
+    return 4;
+    
+}
+
+char stageFour(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length, char max)
+{
+
+    printEnterCar();
+    char car;
+    
+    do
+    {
+        scanf(" %c", &car);
+    } while (!checkCarValidity(car, max));
+    
+
+    return car;
+    
+}
+
+
+
+
+char countCars(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    char counter = '0';
+    
+    for (int i = 0; i < length; i++)
+        for (int j = 0; j < length; j++)
+            if (lot[i][j] >= '0' && lot[i][j] <= '9' && lot[i][j] > counter) counter = lot[i][j];
+
+    return counter;
+}
+
+
+bool checkCarValidity(char car, char max)
+{
+    
+    if ( !((car >= '0' && car <= max) || car == '*') ) {
+        printInvalidCar();
+        return 0;
+    }
+        
+    return 1;
+    
+}
+
+char stageFiveAndSix(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    char direction = readMove(car, lot, length), type;
+    //printf("dir2  = %c", direction);
+    
+    if (direction) {
+        int i = find_loc_i(car, lot, length);
+        int j = find_loc_j(car, lot, length);
+        type = getType(i, j, car, lot, length);
+        if (checkMoveValidity(i, j, car, direction, type, lot, length)) {
+            if (moveCar(i, j, car, direction, type, lot, length))
+                return 'w';
+            else
+                return 1;
+        } else {
+            printInvalidMove();
+            return 0;
+        }
+    } else {
+        printInvalidDirection();
+        return 0;
+    }
+        
+}
+
+char readMove(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    char direction;
+    
+    printEnterDirection();
+    scanf(" %c", &direction);
+    
+    if (!(direction == 'd' || direction == 'r' || direction == 'u' || direction == 'l')) {
+        //printf("dir4  = %c", direction);
+        return 0;
+    }
+    else {
+        //printf("dir3  = %c", direction);
+        return direction;
+    }
+    
+}
+
+//gets the type of a vehicle: horizontal, vertical or quad
+char getType(int i, int j, char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    char type;
+
+    if (i+1 < length) 
+        if (lot[i+1][j] == lot[i][j])
+            type = 'v';
+
+    if (j+1 < length)
+        if (lot[i][j+1] == lot[i][j])
+            type = 'h';
+            
+    if (j+1 < length && i+1 < length)      
+        if (lot[i+1][j] == lot[i][j] && lot[i][j+1] == lot[i][j])
+                type = 'q';
+            
+    return type;
+
+}
+
+//returns the i coordinate of the vehicle's location
+// the locatin of a vehicle is the first read cell
+int find_loc_i(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    for (int i = 0; i < length; i++) 
+        for (int j = 0; j < length; j++) 
+            if (lot[i][j] == car)
+                return i;
+    
+}
+
+//returns the j coordinate of the vehicle's location
+// the locatin of a vehicle is the first read cell
+int find_loc_j(char car, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    for (int i = 0; i < length; i++) 
+        for (int j = 0; j < length; j++) 
+            if (lot[i][j] == car)
+                return j;
+    
+}
+
+bool checkMoveValidity(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    if (type == 'q')
+        return check_neighbors_for_quad(i, j, car, dir, type, lot, length);
+    if (type == 'v')
+        if (dir == 'd' || dir == 'u')
+            return check_neighbor_for_v(i, j, car, dir, type, lot, length);
+    if (type == 'h')    
+        if (dir == 'l' || dir == 'r') {
+            return check_neighbor_for_h(i, j, car, dir, type, lot, length);
+        }
+            
+    return 0;
+    
+}
+
+//checks if the neighboring cells are vacant according to the given move
+//checks if the move is practically correct
+bool check_neighbors_for_quad(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    if (dir == 'u')
+        if (i-1 >= 0)
+            return (lot[i-1][j] == ' ' && lot[i-1][j+1] == ' ');
+    if (dir == 'r')
+        if (j+2 < length)
+            return (lot[i][j+2] == ' ' && lot[i+1][j+2] == ' ');
+    if (dir == 'l')
+        if (j-1 >= 0)
+            return (lot[i][j-1] == ' ' && lot[i+1][j-1] == ' ');
+    if (dir == 'd')
+        if (i+2 < length)
+            return (lot[i+2][j] == ' ' && lot[i+2][j+1] == ' ');
+    
+}
+
+//checks if the neighboring cell id vacant according to the given move
+//checks if the move is practically correct
+bool check_neighbor_for_v(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    int end = find_end(i, j, type, lot, length);
+    if (dir == 'u')
+        if (i-1 >= 0)
+            return (lot[i-1][j] == ' ');
+    if (dir == 'd')
+        if (end+1 < length)
+            return (lot[end+1][j] == ' ');
+            
+    return 0;
+    
+}
+
+//checks if the neighboring cell id vacant according to the given move
+//checks if the move is practically correct
+bool check_neighbor_for_h(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    int end = find_end(i, j, type, lot, length);
+    
+    if (dir == 'l')
+        if (j-1 >= 0)
+            return (lot[i][j-1] == ' ');
+    if (dir == 'r')
+        if (end+1 < length) {
+            return (lot[i][end+1] == ' ');
+        }
+        
+    return 0;
+    
+}
+
+//finds the index of the last cell according to the vehicle's type
+//the type of can only be 'v' or 'h'
+int find_end(int i, int j, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    char car = lot[i][j];
+    
+    if (type == 'v'){
+        for (; lot[i+1][j] == car && i+1 < length; i++) {}
+        return i;
+    }
+    if (type == 'h' || type == '*'){
+        for (; lot[i][j+1] == car && j+1 < length; j++) {}
+        return j;
+    }
+    
+    return 0;
+    
+}
+
+//updates the lot
+bool moveCar(int i, int j, char car, char dir, char type, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+
+    if (type == 'q'){
+        move_quad(i, j, dir, lot);
+    } else {
+        int end = find_end(i, j, type, lot, length);
+        //printf("type = %c, end = %d\n", type, end);
+        if (type == '*' || type == 'h') {
+            move_h(i, j, dir, end, lot);
+        } else {
+            move_v(i, j, dir, end, lot);
+        }
+    }
+    
+    if (lot[length/2][length-1] == '*') {
+        return 1;
+    } else
+        return 0;
+    
+}
+
+void move_quad(int i, int j, char dir, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH])
+{
+    
+    if (dir == 'u'){
+        lot[i-1][j] = lot[i-1][j+1] = lot[i][j];
+        lot[i+1][j] = lot[i+1][j+1] = ' ';
+    }
+    
+    if (dir == 'r'){
+        lot[i][j+2] = lot[i+1][j+2] = lot[i][j];
+        lot[i][j] = lot[i+1][j] = ' ';
+    }
+    
+    if (dir == 'd'){
+        lot[i+2][j] = lot[i+2][j+1] = lot[i][j];
+        lot[i][j] = lot[i][j+1] = ' ';
+    }
+    
+    if (dir == 'l'){
+        lot[i][j-1] = lot[i+1][j-1] = lot[i][j];
+        lot[i][j+1] = lot[i+1][j+1] = ' ';
+    }
+    
+}
+
+void move_h(int i, int j, char dir, int end, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH])
+{
+    
+    if (dir == 'r'){
+        lot[i][end+1] = lot[i][j];
+        lot[i][j] = ' ';
+    } else {
+        lot[i][j-1] = lot[i][j];
+        lot[i][end] = ' ';
+    }
+    
+}
+
+void move_v(int i, int j, char dir, int end, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH])
+{
+    
+    if (dir == 'd'){
+        lot[end+1][j] = lot[i][j];
+        lot[i][j] = ' ';
+    } else {
+        lot[i-1][j] = lot[i][j];
+        lot[end][j] = ' ';
+    }
+    
+}
+
+void printResult(char won, char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    if (won == 'w')
+        Win(lot, length);
+    else
+        Loss(lot, length);
+    
+}
+
+void Loss(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+    printParkingLot(lot, length);
+    printGameLost();
+    
+}
+
+void Win(char lot[MAX_LOT_LENGTH][MAX_LOT_LENGTH], int length)
+{
+    
+        printParkingLot(lot, length);
+        printGameWon();
+
+}
+
+
+
